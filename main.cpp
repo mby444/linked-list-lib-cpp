@@ -69,7 +69,53 @@ Node *search(int data)
         return temp;
     }
 
+    cout << data << " tidak ditemukan" << endl;
     return NULL;
+}
+
+void deleteFront()
+{
+    if (isEmpty())
+    {
+        cout << "Linked list masih kosong" << endl;
+    }
+    else
+    {
+        Node *temp = head;
+        head = head->next;
+        int data = temp->data;
+        delete temp;
+        cout << data << " berhasil dihapus" << endl;
+    }
+}
+
+void deleteBack()
+{
+    if (isEmpty())
+    {
+        cout << "Linked list masih kosong" << endl;
+    }
+    else if (isNextNull(head))
+    {
+        int data = head->data;
+        delete head;
+        head = NULL;
+        cout << data << " behasil dihapus" << endl;
+    }
+    else
+    {
+        Node *temp = head;
+
+        while (temp->next->next != NULL)
+        {
+            temp = temp->next;
+        }
+
+        int data = temp->next->data;
+        delete temp->next;
+        temp->next = NULL;
+        cout << data << " berhasil dihapus" << endl;
+    }
 }
 
 void deleteNode(int data)
@@ -80,14 +126,10 @@ void deleteNode(int data)
     {
         cout << "Linked list masih kosong" << endl;
     }
-    else if (isNextNull(head))
+    else if (head->data == data)
     {
-        if (head->data == data)
-        {
-            delete head;
-            head = NULL;
-            found = true;
-        }
+        deleteFront();
+        found = true;
     }
     else
     {
@@ -101,6 +143,8 @@ void deleteNode(int data)
                 Node *temp2 = temp->next;
                 temp->next = temp2->next;
                 delete temp2;
+                cout << data << " berhasil dihapus" << endl;
+                break;
             }
             temp = temp->next;
         }
@@ -111,7 +155,7 @@ void deleteNode(int data)
     }
 }
 
-void deleteFront()
+void clear()
 {
     if (isEmpty())
     {
@@ -119,43 +163,13 @@ void deleteFront()
     }
     else
     {
-        Node *temp = head;
-        head = head->next;
-        delete temp;
-    }
-}
-
-void deleteBack()
-{
-    if (isEmpty())
-    {
-        cout << "Linked list masih kosong" << endl;
-    }
-    else if (isNextNull(head))
-    {
-        deleteFront();
-    }
-    else
-    {
-        Node *temp = head;
-
-        while (temp->next->next != NULL)
+        while (head != NULL)
         {
-            temp = temp->next;
+            Node *temp = head;
+            head = head->next;
+            delete temp;
         }
-
-        delete temp->next;
-        temp->next = NULL;
-    }
-}
-
-void clearNode()
-{
-    while (head != NULL)
-    {
-        Node *temp = head;
-        head = head->next;
-        delete temp;
+        cout << "Linked list berhasil dikosongkan" << endl;
     }
 }
 
@@ -177,6 +191,7 @@ void insertFront(int newData)
     }
 
     head = newNode;
+    cout << newData << " berhasil ditambahkan dari depan" << endl;
 }
 
 void insertBack(int newData)
@@ -197,6 +212,7 @@ void insertBack(int newData)
         }
 
         temp->next = newNode;
+        cout << newData << " berhasil ditambahkan dari belakang" << endl;
     }
 }
 
@@ -213,18 +229,83 @@ void insertAfter(int dataAfter, int newData)
 
         while (!isNull(temp))
         {
-            if (!isNextNull(temp))
-                temp = temp->next;
+            if (temp->data == dataAfter)
+            {
+                found = true;
+                break;
+            }
+            temp = temp->next;
+        }
+
+        if (found)
+        {
+            Node *newNode = createNode(newData);
+            newNode->next = temp->next;
+            temp->next = newNode;
+            cout << newData << " berhasil ditambahkan setelah " << dataAfter << endl;
+        }
+        else
+        {
+            cout << dataAfter << " tidak ditemukan" << endl;
         }
     }
 }
 
-void insertBefore()
+void insertBefore(int dataBefore, int newData)
 {
+    if (isEmpty())
+    {
+        cout << "Linked list masih kosong" << endl;
+    }
+    else
+    {
+        Node *cur = head;
+        Node *prev = NULL;
+        bool found = false;
+
+        while (!isNull(cur))
+        {
+            if (cur->data == dataBefore)
+            {
+                found = true;
+                break;
+            }
+            prev = cur;
+            cur = cur->next;
+        }
+
+        if (found)
+        {
+            Node *newNode = createNode(newData);
+            newNode->next = cur;
+
+            if (isNull(prev))
+            {
+                head = newNode;
+            }
+            else
+            {
+                prev->next = newNode;
+            }
+            cout << newData << " berhasil ditambahkan sebelum " << dataBefore << endl;
+        }
+        else
+        {
+            cout << dataBefore << " tidak ditemukan" << endl;
+        }
+    }
 }
 
 int main()
 {
+    insertFront(1);
+    insertFront(2);
+    insertFront(3);
+    insertBack(1);
+    insertBack(2);
+    insertBack(3);
 
+    display();
+    clear();
     return 0;
 }
